@@ -1,12 +1,11 @@
 @use 'functions';
+@use "@unsass/breakpoint";
+@import '$styles/button';
 @import '@fontsource/metropolis';
 @import '@fontsource/metropolis/300.css';
 @import '@fontsource/metropolis/500.css';
 @import '@fontsource/metropolis/600.css';
 @import '@fontsource/metropolis/700.css';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 :root {
 	--bg-color: #191414;
 	--sidebar-color: #000;
@@ -85,5 +84,15 @@ a {
 	&:focus-visible {
 		outline: 2px solid var(--accent-color);
 		outline-offset: 2px;
+	}
+}
+#main {
+	#content {
+		main#main-content {
+			padding: 30px 15px 60px;
+			@include breakpoint.up('md') {
+				padding: 30px 30px 60px;
+			}
+		}
 	}
 }

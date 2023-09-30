@@ -1,12 +1,20 @@
 <script lang="ts">
   import "modern-normalize/modern-normalize.css";
-  import "../styles/main.scss";
-  import type { LayoutData } from "./$types";
-  export let data: LayoutData;
+  // import "../app.css";
+  import "$styles/main.scss";
   //   import TailwindCss from "../styles/TailwindCSS.svelte";
 </script>
 
+<style lang="scss">
+  @use "@unsass/breakpoint";
+</style>
+
 <!-- <TailwindCss /> -->
 <!-- Main layout -->
-{data.user && data.user.display_name}
-<slot />
+<div id="main">
+  <div id="content">
+    <main id="main-content">
+      <slot />
+    </main>
+  </div>
+</div>

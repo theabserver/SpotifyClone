@@ -10,7 +10,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/adapter-auto": "^2.1.0",
 		"@sveltejs/kit": "^1.20.4",
 		"@types/node": "^20.7.2",
 		"autoprefixer": "^10.4.16",
@@ -27,6 +27,8 @@
 	"dependencies": {
 		"@fontsource/metropolis": "^5.0.7",
 		"@types/spotify-api": "^0.0.23",
+		"@unsass/breakpoint": "^2.4.0",
+		"lucide-svelte": "^0.279.0",
 		"metropolis": "^0.0.82",
 		"modern-normalize": "^2.0.0",
 		"pkce-gen": "^1.1.0"
