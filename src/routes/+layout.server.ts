@@ -24,6 +24,9 @@ export const load: LayoutServerLoad = async ({ cookies, fetch, url }) => {
     if (response.ok) {
       throw redirect(307, url.pathname);
     }
+    return {
+      user: null,
+    };
   } else {
     return { user: null };
   }

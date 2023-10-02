@@ -16,5 +16,10 @@
     }
   }}
 >
-  <button type="submit">Logout</button>
+  <button class="btn" type="submit">Logout</button>
 </form>
+<style lang="scss">
+  form {
+    display: inline-block;
+  }
+</style>

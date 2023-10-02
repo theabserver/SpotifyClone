@@ -19,6 +19,7 @@
 	export let className: string = '';
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <svelte:element
 	this={element}
 	class="btn btn-{variant} {className}"

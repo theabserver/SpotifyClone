@@ -1,11 +1,12 @@
 @use 'functions';
-@use "@unsass/breakpoint";
 @import '$styles/button';
 @import '@fontsource/metropolis';
 @import '@fontsource/metropolis/300.css';
 @import '@fontsource/metropolis/500.css';
 @import '@fontsource/metropolis/600.css';
 @import '@fontsource/metropolis/700.css';
+@import 'tippy-theme';
+
 :root {
 	--bg-color: #191414;
 	--sidebar-color: #000;
@@ -86,13 +87,16 @@ a {
 		outline-offset: 2px;
 	}
 }
-#main {
-	#content {
-		main#main-content {
-			padding: 30px 15px 60px;
-			@include breakpoint.up('md') {
-				padding: 30px 30px 60px;
-			}
-		}
-	}
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(100%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+#nprogress .bar {
+	background: var(--accent-color) !important;
 }
