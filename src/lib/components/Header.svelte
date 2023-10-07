@@ -1,5 +1,6 @@
 <script>
   import { page } from "$app/stores";
+  import { browser } from '$app/environment';
   import { Navigation } from "$components";
   import tippy from "$lib/actions/tippy";
   import { ChevronDown, ExternalLink } from "lucide-svelte";
@@ -11,7 +12,9 @@
   <!-- The left side of the header -->
   <div class="left">
     <!-- The navigation component for mobile devices -->
-    <Navigation desktop={false} />
+    {#if browser}
+			<Navigation desktop={false} />
+		{/if}
   </div>
   <!-- The right side of the header -->
   <div class="right">

@@ -18,6 +18,7 @@ const config = {
 			$assets: 'src/assets',
 			$styles: 'src/styles',
 			$actions: 'src/lib/actions',
+			$helpers: 'src/lib/helpers',
 		}
 	}
 };

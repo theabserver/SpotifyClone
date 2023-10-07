@@ -66,6 +66,11 @@
 <style lang="scss">
   #main {
     display: flex;
+    :global(html.no-js) & {
+      @include breakpoint.down("md") {
+        display: block;
+      }
+    }
     #content {
       flex: 1;
       #topbar {
@@ -76,6 +81,16 @@
         align-items: center;
         width: 100%;
         z-index: 100;
+        :global(html.no-js) & {
+          position: sticky;
+          top: 0;
+          background-color: var(--header-color);
+          height: auto;
+          padding: 10px 20px;
+          @include breakpoint.up("md") {
+            position: fixed;
+          }
+        }
         .topbar-bg {
           position: absolute;
           width: 100%;
@@ -83,6 +98,7 @@
           top: 0;
           left: 0;
           z-index: -1;
+          background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0 0);
         }
         @include breakpoint.up("md") {
           padding: 0 30px;
@@ -94,9 +110,13 @@
         @include breakpoint.up("md") {
           padding: 30px 30px 60px;
         }
-        /* Add padding to the top of the page to account for the header height only when the user is logged in */
         &.logged-in {
           padding-top: calc(30px + var(--header-height));
+          :global(html.no-js) & {
+            @include breakpoint.down("md") {
+              padding-top: 30px;
+            }
+          }
         }
       }
     }
