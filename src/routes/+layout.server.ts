@@ -8,6 +8,7 @@ export const load: LayoutServerLoad = async ({ cookies, fetch, url }) => {
   if (!access_token) {
     return { user: null };
   }
+  //  get user profile
   const profileResponse = await fetch(`${SPOTIFY_BASE_URL}/me`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
@@ -16,7 +17,20 @@ export const load: LayoutServerLoad = async ({ cookies, fetch, url }) => {
   if (profileResponse.ok) {
     const user: SpotifyApi.CurrentUsersProfileResponse =
       await profileResponse.json();
-    return { user };
+    let userAllPlaylists: SpotifyApi.PlaylistObjectSimplified[] = [];
+    // get user playlists
+    const userPlaylistsRes = await fetch("/api/spotify/me/playlists?limit=50");
+    if (userPlaylistsRes.ok) {
+      // TODO check why playlists has no data
+      const userPlaylistsResJSON: SpotifyApi.ListOfCurrentUsersPlaylistsResponse =
+        await userPlaylistsRes.json();
+      userAllPlaylists = userPlaylistsResJSON.items;
+      // console.log(userAllPlaylists);
+    }
+    return {
+      user,
+      userAllPlaylists,
+    };
   }
   if (profileResponse.status === 401 && refresh_token) {
     //refresh token

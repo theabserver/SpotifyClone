@@ -19,6 +19,7 @@ const config = {
 			$styles: 'src/styles',
 			$actions: 'src/lib/actions',
 			$helpers: 'src/lib/helpers',
+			$stores: 'src/lib/stores'
 		}
 	}
 };

@@ -1,17 +1,24 @@
 <script lang="ts">
-  import { page } from "$app/stores";
-  import { Button, ItemPage } from "$components";
-  import TrackList from "$components/TrackList.svelte";
-  import { Heart } from "lucide-svelte";
-  import type { ActionData, PageData } from "./$types";
   import { applyAction, enhance } from "$app/forms";
+  import { invalidateAll } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { Button, ItemPage, Modal } from "$components";
+  import PlaylistForm from "$components/PlaylistForm.svelte";
+  import TrackList from "$components/TrackList.svelte";
+  import { toasts } from "$stores";
+  import { Heart } from "lucide-svelte";
+  import MicroModal from "micromodal";
+  import { tick } from "svelte";
+  import type { ActionData, PageData } from "./$types";
+  import type { ActionData as EditActionData } from "./edit/$types";
+
   export let data: PageData;
-  export let form: ActionData;
+  export let form: ActionData | EditActionData;
+
   let isLoading = false;
   let isLoadingFollow = false;
   let followButton: Button<"button">;
 
-  $: console.log(form);
   $: color = data.color;
   $: playlist = data.playlist;
   $: tracks = data.playlist.tracks;
@@ -26,19 +33,20 @@
       if (item.track) filteredTracks = [...filteredTracks, item.track];
     });
   }
+
   const followersFormat = Intl.NumberFormat("en", { notation: "compact" });
+
   const loadMoreTracks = async () => {
     if (!tracks.next) return;
     isLoading = true;
     const res = await fetch(
-      // use internal api route
       tracks.next.replace("https://api.spotify.com/v1/", "/api/spotify/")
     );
     const resJSON = await res.json();
     if (res.ok) {
       tracks = { ...resJSON, items: [...tracks.items, ...resJSON.items] };
     } else {
-      alert(resJSON.error.message || "Could not load data!");
+      toasts.error(resJSON.error.message || "Could not load data!");
     }
     isLoading = false;
   };
@@ -60,7 +68,15 @@
   </div>
   <div class="playlist-actions">
     {#if data.user?.id === playlist.owner.id}
-      <Button element="a" variant="outline">Edit Playlist</Button>
+      <Button
+        element="a"
+        variant="outline"
+        href="/playlist/{playlist.id}/edit"
+        on:click={(e) => {
+          e.preventDefault();
+          MicroModal.show("edit-playlist-modal");
+        }}>Edit Playlist</Button
+      >
     {:else if isFollowing !== null}
       <form
         class="follow-form"
@@ -70,11 +86,18 @@
           isLoadingFollow = true;
           return async ({ result }) => {
             isLoadingFollow = false;
-            await applyAction(result);
-            followButton.focus();
+
             if (result.type === "success") {
+              await applyAction(result);
               isFollowing = !isFollowing;
+            } else if (result.type === "failure") {
+              toasts.error(result.data?.followError);
+              await tick();
+            } else {
+              await applyAction(result);
             }
+            followButton.focus();
+            invalidateAll();
           };
         }}
       >
@@ -92,7 +115,7 @@
           {isFollowing ? "Unfollow" : "Follow"}
           <span class="visually-hidden">{playlist.name} playlist</span>
         </Button>
-        {#if form?.followError}
+        {#if form && "followForm" in form && form?.followError}
           <p class="error">{form.followError}</p>
         {/if}
       </form>
@@ -100,7 +123,13 @@
   </div>
 
   {#if playlist.tracks.items.length > 0}
-    <TrackList tracks={filteredTracks} />
+    <TrackList
+      tracks={filteredTracks}
+      isOwner={data.user?.id === playlist.owner.id}
+      userPlaylists={data.userAllPlaylists?.filter(
+        (pl) => pl.owner.id === data.user?.id
+      )}
+    />
     {#if tracks.next}
       <div class="load-more">
         <Button
@@ -144,6 +173,17 @@
     </div>
   {/if}
 </ItemPage>
+<Modal id="edit-playlist-modal" title="Edit {playlist.name}">
+  <PlaylistForm
+    action="/playlist/{playlist.id}/edit"
+    {playlist}
+    form={form && "editForm" in form ? form : null}
+    on:success={() => {
+      MicroModal.close("edit-playlist-modal");
+      invalidateAll();
+    }}
+  />
+</Modal>
 
 <style lang="scss">
   .empty-playlist {

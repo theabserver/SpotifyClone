@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { Album, Music } from "lucide-svelte";
+  import { Music } from "lucide-svelte";
   export let color: string | null;
   export let image: string | undefined;
   export let title: string;
   export let type: string | undefined;
 </script>
-
+<!-- Template for pages. It's used by Album, Playlist & Profile -->
 <div class="banner">
   <div
     class="banner-gradient"

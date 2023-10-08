@@ -3,6 +3,7 @@
   import { getCopyrightSymbol } from "$helpers";
   import { ItemPage } from "$components";
   import TrackList from "$components/TrackList.svelte";
+  import Button from "$components/Button.svelte";
   export let data: PageData;
 
   $: album = data.album;
@@ -17,7 +18,10 @@
 >
   <p class="meta" slot="meta">
     <span class="artists">
-      {album.artists.map((artist) => artist.name).join(", ")}
+      {#each album.artists as artist, index}
+        <a href="/artist/{artist.id}">{artist.name}</a>
+        {index + 1 < album.artists.length ? ", " : ""}
+      {/each}
     </span>
     <span class="date">
       {new Date(album.release_date).getFullYear()}
@@ -27,16 +31,13 @@
       {album.total_tracks === 1 ? "track" : "tracks"}
     </span>
   </p>
-  <div class="tracks">
-    <ul>
-      {#each album.tracks.items as tracks}
-        <li>
-          {tracks.name}
-        </li>
-      {/each}
-    </ul>
-  </div>
-  <TrackList tracks={album.tracks.items} />
+  <!-- User can't own album, so there is no isOwner property -->
+  <TrackList
+    tracks={album.tracks.items}
+    userPlaylists={data.userAllPlaylists?.filter(
+      (pl) => pl.owner.id === data.user?.id
+    )}
+  />
   <div class="credits">
     <p class="date">
       {new Date(album.release_date).toLocaleDateString()}

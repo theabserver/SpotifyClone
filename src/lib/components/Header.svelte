@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
   import { page } from "$app/stores";
-  import { browser } from '$app/environment';
-  import { Navigation } from "$components";
-  import tippy from "$lib/actions/tippy";
+  import { browser } from "$app/environment";
+  import { HeaderNav, Navigation, SearchForm } from "$components";
+  import tippy from "$actions/tippy";
   import { ChevronDown, ExternalLink } from "lucide-svelte";
   import LogoutButton from "./LogoutButton.svelte";
   $: user = $page.data.user;
+  export let userAllPlaylists:
+    | SpotifyApi.PlaylistObjectSimplified[]
+    | undefined;
 </script>
 
 <div class="content">
@@ -13,8 +16,14 @@
   <div class="left">
     <!-- The navigation component for mobile devices -->
     {#if browser}
-			<Navigation desktop={false} />
-		{/if}
+      <Navigation desktop={false} {userAllPlaylists} />
+    {/if}
+    {#if $page.url.pathname.startsWith("/search")}
+      <div class="search-form">
+        <SearchForm />
+      </div>
+    {/if}
+    <HeaderNav />
   </div>
   <!-- The right side of the header -->
   <div class="right">

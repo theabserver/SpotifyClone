@@ -15,6 +15,9 @@
   import { IconButton } from "$components";
 
   export let desktop: boolean;
+  export let userAllPlaylists:
+    | SpotifyApi.PlaylistObjectSimplified[]
+    | undefined;
   let lastFocusableElement: HTMLAnchorElement;
   let openMenuButton: IconButton;
   let closeMenuButton: IconButton;
@@ -114,12 +117,9 @@
           class="menu-button"
         />
       {/if}
-      <ul>
-        <li>
-          <a href="/">
-            <img class="logo" src={logo} width="100px" alt="Spotify" />
-          </a>
-          <!-- Render the menu items -->
+      <div class="logo-and-menu">
+        <img src={logo} class="logo" alt="Spotify" />
+        <ul>
           {#each menuItems as item, index}
             {@const iconProps = {
               focusable: "false",
@@ -146,8 +146,21 @@
               {/if}
             </li>
           {/each}
-        </li>
-      </ul>
+        </ul>
+      </div>
+      {#if userAllPlaylists && userAllPlaylists.length > 0}
+        <div class="all-playlists">
+          <ul>
+            {#each userAllPlaylists as playlist}
+              <li
+                class:active={$page.url.pathname === `/playlist/${playlist.id}`}
+              >
+                <a href="/playlist/{playlist.id}">{playlist.name}</a>
+              </li>
+            {/each}
+          </ul>
+        </div>
+      {/if}
     </div>
   </nav>
 </aside>
@@ -178,6 +191,37 @@
       height: 100vh;
       overflow: auto;
       display: none;
+      .logo-and-menu {
+        padding: 20px 20px 0;
+        overflow: hidden;
+      }
+      .all-playlists {
+        flex: 1;
+        overflow: auto;
+        padding: 15px 20px;
+        border-top: 1px solid var(--border);
+        :global(html.no-js) & {
+          @include breakpoint.down("md") {
+            display: none;
+          }
+        }
+        ul {
+          list-style: none;
+          margin: 0;
+          li {
+            margin: 0 0 5px;
+            a {
+              margin: 0;
+            }
+          }
+        }
+      }
+      :global(html.no-js) & {
+        @include breakpoint.down("md") {
+          display: block;
+          height: auto;
+        }
+      }
       ul {
         padding: 0;
         margin: 20px 0 0;
@@ -215,7 +259,8 @@
       top: 0;
       .nav-content-inner {
         @include breakpoint.up("md") {
-          display: block;
+          display: flex;
+          flex-direction: column;
         }
       }
     }
@@ -226,13 +271,24 @@
       z-index: 100;
       transition: transform 200ms, opacity 200ms;
       &.is-hidden {
-        transition: transform 200ms, opacity 200ms, visibilty 200ms; // timeout for visibility to allow button focus
+        transition: transform 200ms, opacity 200ms, visibility 200ms;
         transform: translateX(-100%);
         opacity: 0;
       }
       @include breakpoint.down("md") {
-        display: block;
+        display: flex;
+        flex-direction: column;
       }
+    }
+    :global(.menu-button) {
+      @include breakpoint.up("md") {
+        display: none;
+      }
+    }
+    :global(.close-menu-button) {
+      position: absolute;
+      right: 20px;
+      top: 20px;
     }
   }
 </style>
